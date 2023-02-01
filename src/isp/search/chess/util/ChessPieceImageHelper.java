@@ -6,6 +6,7 @@ import isp.search.chess.enums.PieceType;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -36,7 +37,7 @@ public class ChessPieceImageHelper {
         BufferedImage textureAtlasImage = null;
 
         try {
-            textureAtlasImage = ImageIO.read(ChessPieceImageHelper.class.getResource(CHESS_TEXTURE_ATLAS_PATH));
+            textureAtlasImage = ImageIO.read(Objects.requireNonNull(ChessPieceImageHelper.class.getResource(CHESS_TEXTURE_ATLAS_PATH)));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
