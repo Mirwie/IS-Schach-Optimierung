@@ -3,12 +3,11 @@ package isp.search.chess.util;
 import isp.search.chess.enums.PieceColor;
 import isp.search.chess.enums.PieceType;
 
-import java.awt.Rectangle;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
-
-import javax.imageio.ImageIO;
 
 public class ChessPieceImageHelper {
 
@@ -20,7 +19,7 @@ public class ChessPieceImageHelper {
 
         short x = 0;
         if (pieceType == PieceType.KING) x = 0;
-        if (pieceType == PieceType.QUEEN) x = 1 * pieceWidth;
+        if (pieceType == PieceType.QUEEN) x = pieceWidth;
         if (pieceType == PieceType.BISHOP) x = 2 * pieceWidth;
         if (pieceType == PieceType.KNIGHT) x = 3 * pieceWidth;
         if (pieceType == PieceType.ROOK) x = 4 * pieceWidth;

@@ -1,7 +1,5 @@
 package isp.search.chess.util;
 
-import isp.search.chess.Piece;
-
 import java.util.Objects;
 
 public class Move {

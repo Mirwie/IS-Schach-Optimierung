@@ -1,17 +1,16 @@
 package isp.search.chess;
 
-import java.awt.event.MouseEvent;
-
-import javax.swing.event.MouseInputListener;
-
 import isp.search.chess.gui.SinglePlayerPanel;
 import isp.search.chess.util.BoardPosition;
 
-public class UserBoardListener implements MouseInputListener{
+import javax.swing.event.MouseInputListener;
+import java.awt.event.MouseEvent;
 
-    private UserInputListener callback;
-    
-    public UserBoardListener(UserInputListener callback){
+public class UserBoardListener implements MouseInputListener {
+
+    private final UserInputListener callback;
+
+    public UserBoardListener(UserInputListener callback) {
         this.callback = callback;
     }
 
@@ -37,32 +36,32 @@ public class UserBoardListener implements MouseInputListener{
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        
-        
+
+
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

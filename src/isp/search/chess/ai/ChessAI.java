@@ -10,8 +10,8 @@ public abstract class ChessAI extends Player {
     public PieceColor pieceColor;
 
     public ChessAI(ChessGame chessGame, PieceColor pieceColor) {
-            this.chessGame = chessGame;
-            this.pieceColor = pieceColor;
+        this.chessGame = chessGame;
+        this.pieceColor = pieceColor;
     }
 
     abstract public void move();

@@ -43,7 +43,7 @@ public class Evaluator {
     }
 
 
-    public static double relativeMovePossibilitiesEvaluator(GameState currentGameState){
+    public static double relativeMovePossibilitiesEvaluator(GameState currentGameState) {
 
         //limit opponents movement & maximize own movement
         double whiteMoveCount = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE).size();
@@ -54,13 +54,13 @@ public class Evaluator {
 
     }
 
-    public static double checkmateEvaluator(GameState currentGameState){
+    public static double checkmateEvaluator(GameState currentGameState) {
 
         //limit opponents movement & maximize own movement
         List<Move> whiteMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE);
         List<Move> blackMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK);
 
-        if(whiteMoves.size() == 0){
+        if (whiteMoves.size() == 0) {
 
             //get king
             Piece king = currentGameState.getPieces().stream()
@@ -73,20 +73,20 @@ public class Evaluator {
             boolean isInCheck = blackMoves.stream()
                     .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
 
-            if(currentGameState.getTurnColor() == PieceColor.WHITE){
-                if(isInCheck){
+            if (currentGameState.getTurnColor() == PieceColor.WHITE) {
+                if (isInCheck) {
                     //check mate
                     return Double.NEGATIVE_INFINITY;
-                }else{
+                } else {
                     //stalemate
                     return Double.POSITIVE_INFINITY;
                 }
-            }else{
+            } else {
                 System.out.println("never called");
-                if(isInCheck){
+                if (isInCheck) {
                     //check mate
                     return Double.POSITIVE_INFINITY;
-                }else{
+                } else {
                     //stalemate
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -94,7 +94,7 @@ public class Evaluator {
 
         }
 
-        if(blackMoves.size() == 0){
+        if (blackMoves.size() == 0) {
 
             //get king
             Piece king = currentGameState.getPieces().stream()
@@ -107,20 +107,20 @@ public class Evaluator {
             boolean isInCheck = whiteMoves.stream()
                     .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
 
-            if(currentGameState.getTurnColor() == PieceColor.BLACK){
-                if(isInCheck){
+            if (currentGameState.getTurnColor() == PieceColor.BLACK) {
+                if (isInCheck) {
                     //check mate
                     return Double.POSITIVE_INFINITY;
-                }else{
+                } else {
                     //stalemate
                     return Double.NEGATIVE_INFINITY;
                 }
-            }else{
+            } else {
                 System.out.println("never called");
-                if(isInCheck){
+                if (isInCheck) {
                     //check mate
                     return Double.NEGATIVE_INFINITY;
-                }else{
+                } else {
                     //stalemate
                     return Double.POSITIVE_INFINITY;
                 }
@@ -133,52 +133,52 @@ public class Evaluator {
     }
 
 
-    public static double castleEvaluator(GameState currentGameState){
+    public static double castleEvaluator(GameState currentGameState) {
 
         //limit opponents movement & maximize own movement
         boolean whiteCastled = false, blackCastled = false;
 
         //white
-        if(currentGameState.getPieceAtPosition(new BoardPosition(3, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(3, 0)).getPieceType() == PieceType.ROOK
-                && currentGameState.getPieceAtPosition(new BoardPosition(3, 0)).getPieceColor() == PieceColor.WHITE){
-            if((currentGameState.getPieceAtPosition(new BoardPosition(2, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(2, 0)).getPieceType() == PieceType.KING
+        if (currentGameState.getPieceAtPosition(new BoardPosition(3, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(3, 0)).getPieceType() == PieceType.ROOK
+                && currentGameState.getPieceAtPosition(new BoardPosition(3, 0)).getPieceColor() == PieceColor.WHITE) {
+            if ((currentGameState.getPieceAtPosition(new BoardPosition(2, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(2, 0)).getPieceType() == PieceType.KING
                     && currentGameState.getPieceAtPosition(new BoardPosition(2, 0)).getPieceColor() == PieceColor.WHITE)
-                || (currentGameState.getPieceAtPosition(new BoardPosition(1, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(1, 0)).getPieceType() == PieceType.KING
+                    || (currentGameState.getPieceAtPosition(new BoardPosition(1, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(1, 0)).getPieceType() == PieceType.KING
                     && currentGameState.getPieceAtPosition(new BoardPosition(1, 0)).getPieceColor() == PieceColor.WHITE)
-                ||(currentGameState.getPieceAtPosition(new BoardPosition(0, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(0, 0)).getPieceType() == PieceType.KING
-                    && currentGameState.getPieceAtPosition(new BoardPosition(0, 0)).getPieceColor() == PieceColor.WHITE)){
+                    || (currentGameState.getPieceAtPosition(new BoardPosition(0, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(0, 0)).getPieceType() == PieceType.KING
+                    && currentGameState.getPieceAtPosition(new BoardPosition(0, 0)).getPieceColor() == PieceColor.WHITE)) {
                 whiteCastled = true;
             }
         }
-        if(currentGameState.getPieceAtPosition(new BoardPosition(5, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(5, 0)).getPieceType() == PieceType.ROOK
-                && currentGameState.getPieceAtPosition(new BoardPosition(5, 0)).getPieceColor() == PieceColor.WHITE){
-            if((currentGameState.getPieceAtPosition(new BoardPosition(6, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(6, 0)).getPieceType() == PieceType.KING
+        if (currentGameState.getPieceAtPosition(new BoardPosition(5, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(5, 0)).getPieceType() == PieceType.ROOK
+                && currentGameState.getPieceAtPosition(new BoardPosition(5, 0)).getPieceColor() == PieceColor.WHITE) {
+            if ((currentGameState.getPieceAtPosition(new BoardPosition(6, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(6, 0)).getPieceType() == PieceType.KING
                     && currentGameState.getPieceAtPosition(new BoardPosition(6, 0)).getPieceColor() == PieceColor.WHITE)
                     || (currentGameState.getPieceAtPosition(new BoardPosition(7, 0)) != null && currentGameState.getPieceAtPosition(new BoardPosition(7, 0)).getPieceType() == PieceType.KING
-                    && currentGameState.getPieceAtPosition(new BoardPosition(7, 0)).getPieceColor() == PieceColor.WHITE)){
+                    && currentGameState.getPieceAtPosition(new BoardPosition(7, 0)).getPieceColor() == PieceColor.WHITE)) {
                 whiteCastled = true;
             }
         }
 
 
         //black
-        if(currentGameState.getPieceAtPosition(new BoardPosition(3, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(3, 7)).getPieceType() == PieceType.ROOK
-                && currentGameState.getPieceAtPosition(new BoardPosition(3, 7)).getPieceColor() == PieceColor.WHITE){
-            if((currentGameState.getPieceAtPosition(new BoardPosition(2, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(2, 7)).getPieceType() == PieceType.KING
+        if (currentGameState.getPieceAtPosition(new BoardPosition(3, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(3, 7)).getPieceType() == PieceType.ROOK
+                && currentGameState.getPieceAtPosition(new BoardPosition(3, 7)).getPieceColor() == PieceColor.WHITE) {
+            if ((currentGameState.getPieceAtPosition(new BoardPosition(2, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(2, 7)).getPieceType() == PieceType.KING
                     && currentGameState.getPieceAtPosition(new BoardPosition(2, 7)).getPieceColor() == PieceColor.WHITE)
                     || (currentGameState.getPieceAtPosition(new BoardPosition(1, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(1, 7)).getPieceType() == PieceType.KING
                     && currentGameState.getPieceAtPosition(new BoardPosition(1, 7)).getPieceColor() == PieceColor.WHITE)
-                    ||(currentGameState.getPieceAtPosition(new BoardPosition(0, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(0, 7)).getPieceType() == PieceType.KING
-                    && currentGameState.getPieceAtPosition(new BoardPosition(0, 7)).getPieceColor() == PieceColor.WHITE)){
+                    || (currentGameState.getPieceAtPosition(new BoardPosition(0, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(0, 7)).getPieceType() == PieceType.KING
+                    && currentGameState.getPieceAtPosition(new BoardPosition(0, 7)).getPieceColor() == PieceColor.WHITE)) {
                 blackCastled = true;
             }
         }
-        if(currentGameState.getPieceAtPosition(new BoardPosition(5, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(5, 7)).getPieceType() == PieceType.ROOK
-                && currentGameState.getPieceAtPosition(new BoardPosition(5, 7)).getPieceColor() == PieceColor.WHITE){
-            if((currentGameState.getPieceAtPosition(new BoardPosition(6, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(6, 7)).getPieceType() == PieceType.KING
+        if (currentGameState.getPieceAtPosition(new BoardPosition(5, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(5, 7)).getPieceType() == PieceType.ROOK
+                && currentGameState.getPieceAtPosition(new BoardPosition(5, 7)).getPieceColor() == PieceColor.WHITE) {
+            if ((currentGameState.getPieceAtPosition(new BoardPosition(6, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(6, 7)).getPieceType() == PieceType.KING
                     && currentGameState.getPieceAtPosition(new BoardPosition(6, 7)).getPieceColor() == PieceColor.WHITE)
                     || (currentGameState.getPieceAtPosition(new BoardPosition(7, 7)) != null && currentGameState.getPieceAtPosition(new BoardPosition(7, 7)).getPieceType() == PieceType.KING
-                    && currentGameState.getPieceAtPosition(new BoardPosition(7, 7)).getPieceColor() == PieceColor.WHITE)){
+                    && currentGameState.getPieceAtPosition(new BoardPosition(7, 7)).getPieceColor() == PieceColor.WHITE)) {
                 blackCastled = true;
             }
         }
@@ -195,7 +195,7 @@ public class Evaluator {
     }
 
 
-    public static double evaluatorV1(GameState currentGameState){
+    public static double evaluatorV1(GameState currentGameState) {
 
         double staticEvaluation = evaluatePiecesByStaticValue(currentGameState);
         double checkmateEvaluation = checkmateEvaluator(currentGameState);
@@ -206,7 +206,7 @@ public class Evaluator {
     }
 
 
-    public static double evaluatorV2(GameState currentGameState){
+    public static double evaluatorV2(GameState currentGameState) {
 
         double staticEvaluation = evaluatePiecesByStaticValue(currentGameState);
         double relativeMovePossibilitiesEvaluation = relativeMovePossibilitiesEvaluator(currentGameState);
@@ -216,7 +216,7 @@ public class Evaluator {
 
     }
 
-    public static double evaluatorV3(GameState currentGameState){
+    public static double evaluatorV3(GameState currentGameState) {
 
         double staticEvaluation = evaluatePiecesByStaticValue(currentGameState);
         double relativeMovePossibilitiesEvaluation = relativeMovePossibilitiesEvaluator(currentGameState);
@@ -228,20 +228,20 @@ public class Evaluator {
     }
 
 
-    private static double mapToPieceValueStatic(Piece piece){
-        if(piece.getPieceType() == PieceType.PAWN){
+    private static double mapToPieceValueStatic(Piece piece) {
+        if (piece.getPieceType() == PieceType.PAWN) {
             return 1;
         }
-        if(piece.getPieceType() == PieceType.KNIGHT){
+        if (piece.getPieceType() == PieceType.KNIGHT) {
             return 3;
         }
-        if(piece.getPieceType() == PieceType.BISHOP){
+        if (piece.getPieceType() == PieceType.BISHOP) {
             return 3;
         }
-        if(piece.getPieceType() == PieceType.ROOK){
+        if (piece.getPieceType() == PieceType.ROOK) {
             return 5;
         }
-        if(piece.getPieceType() == PieceType.QUEEN){
+        if (piece.getPieceType() == PieceType.QUEEN) {
             return 9;
         }
 

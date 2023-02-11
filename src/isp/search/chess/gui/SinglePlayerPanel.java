@@ -3,12 +3,11 @@ package isp.search.chess.gui;
 import isp.search.chess.GameState;
 import isp.search.chess.Piece;
 import isp.search.chess.Player;
-import isp.search.chess.UserBoardListener;
 import isp.search.chess.util.BoardPosition;
 import isp.search.chess.util.ChessPieceImageHelper;
 import isp.search.chess.util.MoveCalculator;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class SinglePlayerPanel extends JPanel {
 
     private GameState gameState;
 
-    private BufferedImage chessPieceAtlasImage;
+    private final BufferedImage chessPieceAtlasImage;
 
     private List<BoardPosition> selectedTiles;
 
@@ -69,10 +68,10 @@ public class SinglePlayerPanel extends JPanel {
 
                 //draw squares
 
-                g2.setColor((x + y) % 2 == 0 ? new Color(50, 65, 70) : Color.WHITE);
+                g2.setColor((x + y) % 2 == 0 ? new Color(4, 19, 150) : new Color(64, 103, 183));
                 //if tile is selected change color
                 if (selectedTiles.stream().anyMatch(selectedTile -> selectedTile.equals(currentBoardPosition))) {
-                    g2.setColor(new Color(150, 165, 170));
+                    g2.setColor(new Color(5, 14, 58));
                 }
 
                 g2.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
@@ -87,7 +86,7 @@ public class SinglePlayerPanel extends JPanel {
                         g2.fillOval(x * tileSize + tileSize / 2 - indicatorRadius, y * tileSize + tileSize / 2 - indicatorRadius,
                                 indicatorRadius * 2, indicatorRadius * 2);
                     } else {
-                        g2.setColor(new Color(200, 165, 170));
+                        g2.setColor(new Color(197, 93, 100));
                         g2.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
                     }
                 }

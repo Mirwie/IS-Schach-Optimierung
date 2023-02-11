@@ -5,9 +5,9 @@ import isp.search.chess.gui.SingleplayerFrame;
 import isp.search.chess.util.FenLoader;
 
 public class ChessGame {
-    private GameState gameState;
+    private final GameState gameState;
 
-    private SingleplayerFrame singleplayerFrame;
+    private final SingleplayerFrame singleplayerFrame;
 
 
     private Player playerWhite, playerBlack;
@@ -62,9 +62,9 @@ public class ChessGame {
 
         }
 
-        if(gameState.getWinnerColor() != null){
+        if (gameState.getWinnerColor() != null) {
             System.out.println(gameState.getWinnerColor() + " WON!");
-        }else{
+        } else {
             System.out.println("REMI!");
         }
 

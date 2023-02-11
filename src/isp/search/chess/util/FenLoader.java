@@ -1,15 +1,15 @@
 package isp.search.chess.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import isp.search.chess.GameState;
 import isp.search.chess.Piece;
 import isp.search.chess.enums.PieceColor;
 import isp.search.chess.enums.PieceType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FenLoader {
-    private static int ROW_COUNT = 8;
+    private static final int ROW_COUNT = 8;
 
     public static GameState loadGameStateFromFenString(String fenString) {
 

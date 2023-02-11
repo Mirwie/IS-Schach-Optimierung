@@ -1,22 +1,22 @@
 package isp.search.chess.gui;
 
 
-import javax.swing.JFrame;
-
-
 import isp.search.chess.GameState;
 import isp.search.chess.Player;
 import isp.search.chess.UserBoardListener;
-import isp.search.chess.util.BoardPosition;
+
+import javax.swing.*;
 
 public class SingleplayerFrame extends JFrame {
-    private SinglePlayerPanel singlePlayerPanel;
+    private final SinglePlayerPanel singlePlayerPanel;
 
     public SingleplayerFrame() {
 
-        setTitle("Singleplayer Frame");
-        setSize(1300, 1300);
+        setTitle("Chess");
+        setSize(1001, 1038); // Sieht auch wenn die Werte unschön sind so am besten aus
+        setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         singlePlayerPanel = new SinglePlayerPanel();
 

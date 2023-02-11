@@ -8,7 +8,7 @@ import isp.search.chess.util.BoardPosition;
 public class Piece {
     private BoardPosition boardPosition;
     private PieceType pieceType;
-    private PieceColor pieceColor;
+    private final PieceColor pieceColor;
 
 
     public Piece(BoardPosition boardPosition, PieceType pieceType, PieceColor pieceColor) {

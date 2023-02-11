@@ -36,10 +36,9 @@ public class BoardPosition {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (!(o instanceof BoardPosition)) {
+        if (!(o instanceof BoardPosition boardPosition)) {
             return false;
         }
-        BoardPosition boardPosition = (BoardPosition) o;
         return boardX == boardPosition.boardX && boardY == boardPosition.boardY;
     }
 
@@ -50,8 +49,8 @@ public class BoardPosition {
 
     @Override
     public String toString() {
-        return ((char) (getBoardX() + 'a')) + "" + (getBoardY()+1);
+        return ((char) (getBoardX() + 'a')) + "" + (getBoardY() + 1);
     }
-    
+
 
 }

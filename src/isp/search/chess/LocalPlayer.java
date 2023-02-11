@@ -3,7 +3,7 @@ package isp.search.chess;
 import isp.search.chess.enums.PieceColor;
 import isp.search.chess.util.BoardPosition;
 
-public class LocalPlayer extends Player implements UserInputListener{
+public class LocalPlayer extends Player implements UserInputListener {
     public ChessGame chessGame;
     public PieceColor pieceColor;
 
@@ -47,9 +47,9 @@ public class LocalPlayer extends Player implements UserInputListener{
                         //deselect move indicator
                         selectedTile = null;
 
-                    //} else {
-                    //    selectedTile = pressedTile;
-                    //}
+                        //} else {
+                        //    selectedTile = pressedTile;
+                        //}
                     } else {
                         selectedTile = pressedTile;
                     }
@@ -67,7 +67,7 @@ public class LocalPlayer extends Player implements UserInputListener{
     public void onMoveRequested() {
         isToMove = true;
 
-        while(!hasMoved){
+        while (!hasMoved) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
