@@ -13,11 +13,11 @@ import java.util.function.Function;
 /*
  * Diese Klasse erweitert die Klasse ChessAI und implementiert die Bewertung der Spielsituation.
  */
-public class ChessAIEvaluator extends ChessAI {
+public class ChessAiAlphaBetaPruning extends ChessAI {
     private final Function<GameState, Double> evalFunction;
     private final int depth;
 
-    public ChessAIEvaluator(ChessGame chessGame, PieceColor pieceColor, Function<GameState, Double> evalFunction, int depth) {
+    public ChessAiAlphaBetaPruning(ChessGame chessGame, PieceColor pieceColor, Function<GameState, Double> evalFunction, int depth) {
         super(chessGame, pieceColor);
         this.evalFunction = evalFunction;
         this.depth = depth;
@@ -25,7 +25,7 @@ public class ChessAIEvaluator extends ChessAI {
 
 
     @Override
-    public void move() {
+    public void move(boolean withOutput) {
 
         GameState currentGameState = chessGame.getGameState();
 
@@ -33,6 +33,7 @@ public class ChessAIEvaluator extends ChessAI {
         AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(this.evalFunction);
 
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, this.pieceColor);
+
 
 
         if (this.pieceColor == PieceColor.WHITE) {
@@ -60,8 +61,10 @@ public class ChessAIEvaluator extends ChessAI {
                 }
             }
 
-            System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, bestMove, bestMoveEval);
-            System.out.println("------------------------------------");
+            if (withOutput) {
+                System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, bestMove, bestMoveEval);
+                System.out.println("------------------------------------");
+            }
 
             //move best move
             currentGameState.movePieceWithLegalCheck(currentGameState.getPieceAtPosition(bestMove.getOldBoardPosition()), bestMove.getNewBoardPosition());
@@ -84,7 +87,9 @@ public class ChessAIEvaluator extends ChessAI {
 
                 double evalOfMove = alphaBetaPruning.minimax(clonedGameState, PieceColor.BLACK, this.depth, Double.NEGATIVE_INFINITY, bestMoveEval);
 
-                System.out.printf("Move for %s: %s with eval of %s%n", this.pieceColor, legalMove, evalOfMove);
+                if (withOutput) {
+                    System.out.printf("Move for %s: %s with eval of %s%n", this.pieceColor, legalMove, evalOfMove);
+                }
 
                 if (evalOfMove <= bestMoveEval) {
                     bestMove = legalMove;
@@ -93,8 +98,10 @@ public class ChessAIEvaluator extends ChessAI {
                 }
             }
 
-            System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, bestMove, bestMoveEval);
-            System.out.println("------------------------------------");
+            if (withOutput) {
+                System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, bestMove, bestMoveEval);
+                System.out.println("------------------------------------");
+            }
 
             //move best move
             currentGameState.movePieceWithLegalCheck(currentGameState.getPieceAtPosition(bestMove.getOldBoardPosition()), bestMove.getNewBoardPosition());

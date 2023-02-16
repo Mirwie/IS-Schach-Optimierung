@@ -2,10 +2,13 @@ package isp.search.chess;
 
 
 import isp.search.chess.ai.ChessAI;
-import isp.search.chess.ai.ChessAIEvaluator;
+import isp.search.chess.ai.ChessAiAlphaBetaPruning;
 import isp.search.chess.ai.ChessAIRandom;
 import isp.search.chess.ai.Evaluator;
 import isp.search.chess.enums.PieceColor;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class App {
     public static void main(String[] args) {
@@ -15,20 +18,27 @@ public class App {
         String fenStringStartingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         ChessGame chessGame = new ChessGame(fenStringStartingPosition);
-
-        ChessAI evaluatorChessAI = new ChessAIEvaluator(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
-
-        ChessAI evaluatorChessAI2 = new ChessAIEvaluator(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 1);
-
+        ChessAI randomChessAI1 = new ChessAIRandom(chessGame, PieceColor.WHITE);
+        //ChessAI evaluatorChessAI = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
         ChessAI randomChessAI = new ChessAIRandom(chessGame, PieceColor.BLACK);
 
+        ChessAI evaluatorChessAI = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 0);
+
+        ChessAI evaluatorChessAI2 = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 0);
+
+
         LocalPlayer localPlayer = new LocalPlayer(chessGame, PieceColor.BLACK);
+        LocalPlayer localPlayer1 = new LocalPlayer(chessGame, PieceColor.WHITE);
 
-        //set players
         chessGame.setPlayerWhite(evaluatorChessAI);
-        chessGame.setPlayerBlack(localPlayer);
+        chessGame.setPlayerBlack(evaluatorChessAI2);
 
-        chessGame.start();
+        for(int i=0;i<6;i++) {
+            chessGame.start(false);
+            chessGame.reset();
+        }
+        System.out.println(chessGame.winnerMap);
+
     }
 
 }

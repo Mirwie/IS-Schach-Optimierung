@@ -17,7 +17,7 @@ public class ChessAIRandom extends ChessAI {
     }
 
     @Override
-    public void move() {
+    public void move(boolean withOutputs) {
         GameState currentGameState = chessGame.getGameState();
 
         //get random piece that is movable

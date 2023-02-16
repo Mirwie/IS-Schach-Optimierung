@@ -20,7 +20,7 @@ public class ChessAIFirstMove extends ChessAI {
 
 
     @Override
-    public void move() {
+    public void move(boolean withOutputs) {
         GameState currentGameState = chessGame.getGameState();
 
         Piece FirstPieceThatCanMove = currentGameState.getPieces().stream()

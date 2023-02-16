@@ -14,11 +14,11 @@ public abstract class ChessAI extends Player {
         this.pieceColor = pieceColor;
     }
 
-    abstract public void move();
+    abstract public void move(boolean withOutput);
 
     @Override
-    public void onMoveRequested() {
-        move();
+    public void onMoveRequested(boolean withOutputs) {
+        move(withOutputs);
         try {
             Thread.sleep(0);
         } catch (InterruptedException e) {

@@ -100,7 +100,7 @@ public class MoveCalculator {
 
             //KNIGHT
             if (piece.getPieceType() == PieceType.KNIGHT) {
-                BoardPosition[] theoritacalKnightMoves = {
+                BoardPosition[] theoritacalKnightMoves = { //TODO nicht jedes mal berechnen
                         new BoardPosition(piece.getBoardX() - 1, piece.getBoardY() + 2),
                         new BoardPosition(piece.getBoardX() + 1, piece.getBoardY() + 2),
                         new BoardPosition(piece.getBoardX() + 2, piece.getBoardY() + 1),

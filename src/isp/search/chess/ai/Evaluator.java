@@ -13,7 +13,7 @@ import java.util.List;
 public class Evaluator {
 
     //positive means white is better
-    public static double evaluatePieceCount(GameState currentGameState) {
+    public static double evaluatePieceCount(GameState currentGameState) { // Wie viele Pieces nur
 
         double blackPieceCount = currentGameState.getPieces().stream()
                 .filter(p -> p.getPieceColor() == PieceColor.BLACK)
@@ -27,7 +27,7 @@ public class Evaluator {
     }
 
 
-    public static double evaluatePiecesByStaticValue(GameState currentGameState) {
+    public static double evaluatePiecesByStaticValue(GameState currentGameState) { // Welche Pieces hat man noch
 
         double blackPieceValueSum = currentGameState.getPieces().stream()
                 .filter(p -> p.getPieceColor() == PieceColor.BLACK)
@@ -43,7 +43,18 @@ public class Evaluator {
     }
 
 
-    public static double relativeMovePossibilitiesEvaluator(GameState currentGameState) {
+    public static double movePossibilitiesEvaluator(GameState currentGameState) { // Wie viele Moves
+
+        //limit opponents movement & maximize own movement
+        double whiteMoveCount = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE).size();
+        double blackMoveCount = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK).size();
+
+        //normalize
+        return (whiteMoveCount - blackMoveCount) / (whiteMoveCount + blackMoveCount);
+
+    }
+
+    public static double relativeMovePossibilitiesEvaluator(GameState currentGameState) { // Wie viele Moves relativ
 
         //limit opponents movement & maximize own movement
         double whiteMoveCount = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE).size();
@@ -133,7 +144,7 @@ public class Evaluator {
     }
 
 
-    public static double castleEvaluator(GameState currentGameState) {
+    public static double castleEvaluator(GameState currentGameState) { // sollte man castlen?
 
         //limit opponents movement & maximize own movement
         boolean whiteCastled = false, blackCastled = false;
@@ -201,7 +212,7 @@ public class Evaluator {
         double checkmateEvaluation = checkmateEvaluator(currentGameState);
 
 
-        return 1 * staticEvaluation + checkmateEvaluation + 0.1 * Math.random();
+        return staticEvaluation + checkmateEvaluation + 0.1 * Math.random();
 
     }
 

@@ -64,7 +64,7 @@ public class LocalPlayer extends Player implements UserInputListener {
     }
 
     @Override
-    public void onMoveRequested() {
+    public void onMoveRequested(boolean withOutputs) {
         isToMove = true;
 
         while (!hasMoved) {

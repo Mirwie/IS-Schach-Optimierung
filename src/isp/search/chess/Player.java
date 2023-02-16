@@ -4,7 +4,7 @@ import isp.search.chess.util.BoardPosition;
 
 public abstract class Player {
 
-    public abstract void onMoveRequested();
+    public abstract void onMoveRequested(boolean withOutputs);
 
     abstract public BoardPosition getSelectedTile();
 }

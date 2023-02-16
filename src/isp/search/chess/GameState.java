@@ -213,6 +213,10 @@ public class GameState {
         return winnerColor;
     }
 
+    public String getWinnerKey() {
+        return  "" + winnerColor + " Won";
+    }
+
     public boolean isGameFinished() {
         return gameFinished;
     }
