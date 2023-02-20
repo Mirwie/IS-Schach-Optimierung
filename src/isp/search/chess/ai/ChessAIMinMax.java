@@ -26,7 +26,6 @@ public class ChessAIMinMax extends ChessAI{
     @Override
     public void move(boolean withOutput) {
         GameState currentGameState = chessGame.getGameState();
-        int count = 0;
         final long startTime = System.currentTimeMillis();
 
         Move bestMove = null;
@@ -36,18 +35,14 @@ public class ChessAIMinMax extends ChessAI{
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, this.pieceColor);
 
         for (Move legalMove : allLegalMoves) {
-            count += 1;
+            iterateCount();
             //clone gameState and move
             String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
             GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
             clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
 
             // White is Maximizing Player and after white comes black so first is min and andersrum
-            currentValue = currentGameState.getTurnColor() == PieceColor.WHITE ? min2(clonedGameState, depth - 1) : max2(clonedGameState, depth - 1);
-
-            if(highestValue==currentValue) {
-                System.out.println(currentValue);
-            }
+            currentValue = currentGameState.getTurnColor() == PieceColor.WHITE ? min(clonedGameState, depth - 1) : max(clonedGameState, depth - 1);
 
             if (currentGameState.getTurnColor() == PieceColor.WHITE && currentValue >= highestValue) {
                 highestValue = currentValue;
@@ -75,22 +70,23 @@ public class ChessAIMinMax extends ChessAI{
 
         //move
         currentGameState.movePieceWithLegalCheck(currentGameState.getPieceAtPosition(bestMove.getOldBoardPosition()), bestMove.getNewBoardPosition());
+        resetCount();
     }
 
-    public double max2(GameState currentGameState, int depth) {
-        if (depth == 0 || currentGameState.isGameFinished()) return evalFunction.apply(currentGameState);
+    public double max(GameState currentGameState, int depth) {
+        if (depth <= 0 || currentGameState.isGameFinished()) return evalFunction.apply(currentGameState);
 
         double highest = -Double.MAX_VALUE;
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, currentGameState.getTurnColor());
         String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
 
         for (Move legalMove : allLegalMoves) {
-            count +=1;
+            iterateCount();
             //clone gameState and move
             GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
             clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
 
-            double currentValue = min2(clonedGameState, depth - 1);
+            double currentValue = min(clonedGameState, depth - 1);
 
             if (currentValue >= highest) {
                 highest = currentValue;
@@ -101,20 +97,20 @@ public class ChessAIMinMax extends ChessAI{
     }
 
 
-    public double min2(GameState currentGameState, int depth) {
-        if (depth == 0 || currentGameState.isGameFinished()) return evalFunction.apply(currentGameState);
+    public double min(GameState currentGameState, int depth) {
+        if (depth <= 0 || currentGameState.isGameFinished()) return evalFunction.apply(currentGameState);
 
         double lowest = Double.MAX_VALUE;
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, currentGameState.getTurnColor());
         String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
 
         for (Move legalMove : allLegalMoves) {
-            count +=1;
+            iterateCount();
             //clone gameState and move
             GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
             clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
 
-            double currentValue = max2(clonedGameState, depth - 1);
+            double currentValue = max(clonedGameState, depth - 1);
 
             if (currentValue <= lowest) {
                 lowest = currentValue;
@@ -122,5 +118,13 @@ public class ChessAIMinMax extends ChessAI{
 
         }
         return lowest;
+    }
+
+    public void iterateCount() {
+        this.count++;
+    }
+
+    public void resetCount() {
+        this.count = 0;
     }
 }

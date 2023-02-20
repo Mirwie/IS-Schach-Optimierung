@@ -4,9 +4,6 @@ package isp.search.chess;
 import isp.search.chess.ai.*;
 import isp.search.chess.enums.PieceColor;
 
-import java.util.Collection;
-import java.util.Collections;
-
 public class App {
     public static void main(String[] args) {
 
@@ -21,7 +18,7 @@ public class App {
 
         ChessAI evaluatorChessAIW = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
 
-        ChessAI evaluatorChessAIB = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 2);
+        ChessAI evaluatorChessAIB = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 1);
 
 //        ChessAI mctsWhite = new ChessAiMCTS(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3);
 //        ChessAI mctsBlack = new ChessAiMCTS(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3);
@@ -29,9 +26,9 @@ public class App {
         LocalPlayer localPlayer = new LocalPlayer(chessGame, PieceColor.BLACK);
         LocalPlayer localPlayer1 = new LocalPlayer(chessGame, PieceColor.WHITE);
 
-        ChessAI chessAIMinMaxW = new ChessAIMinMax(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3, 1);
+        ChessAI chessAIMinMaxW = new ChessAIMinMax(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3, 2);
 
-        ChessAI chessAIMinMaxB = new ChessAIMinMax(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 1);
+        ChessAI chessAIMinMaxB = new ChessAIMinMax(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 2);
 
         chessGame.setPlayerWhite(chessAIMinMaxW);
         chessGame.setPlayerBlack(chessAIMinMaxB);
