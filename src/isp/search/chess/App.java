@@ -1,10 +1,7 @@
 package isp.search.chess;
 
 
-import isp.search.chess.ai.ChessAI;
-import isp.search.chess.ai.ChessAiAlphaBetaPruning;
-import isp.search.chess.ai.ChessAIRandom;
-import isp.search.chess.ai.Evaluator;
+import isp.search.chess.ai.*;
 import isp.search.chess.enums.PieceColor;
 
 import java.util.Collection;
@@ -18,26 +15,35 @@ public class App {
         String fenStringStartingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         ChessGame chessGame = new ChessGame(fenStringStartingPosition);
-        ChessAI randomChessAI1 = new ChessAIRandom(chessGame, PieceColor.WHITE);
+        ChessAI randomChessAIW = new ChessAIRandom(chessGame, PieceColor.WHITE);
         //ChessAI evaluatorChessAI = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
-        ChessAI randomChessAI = new ChessAIRandom(chessGame, PieceColor.BLACK);
+        ChessAI randomChessAIB = new ChessAIRandom(chessGame, PieceColor.BLACK);
 
-        ChessAI evaluatorChessAI = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 0);
+        ChessAI evaluatorChessAIW = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
 
-        ChessAI evaluatorChessAI2 = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 0);
+        ChessAI evaluatorChessAIB = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 2);
 
+//        ChessAI mctsWhite = new ChessAiMCTS(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3);
+//        ChessAI mctsBlack = new ChessAiMCTS(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3);
 
         LocalPlayer localPlayer = new LocalPlayer(chessGame, PieceColor.BLACK);
         LocalPlayer localPlayer1 = new LocalPlayer(chessGame, PieceColor.WHITE);
 
-        chessGame.setPlayerWhite(evaluatorChessAI);
-        chessGame.setPlayerBlack(evaluatorChessAI2);
+        ChessAI chessAIMinMaxW = new ChessAIMinMax(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3, 1);
 
-        for(int i=0;i<6;i++) {
-            chessGame.start(false);
+        ChessAI chessAIMinMaxB = new ChessAIMinMax(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 1);
+
+        chessGame.setPlayerWhite(chessAIMinMaxW);
+        chessGame.setPlayerBlack(chessAIMinMaxB);
+
+        for(int i=0;i<10;i++) {
+            chessGame.start(true);
             chessGame.reset();
         }
         System.out.println(chessGame.winnerMap);
+
+
+
 
     }
 
