@@ -12,26 +12,28 @@ public class App {
         String fenStringStartingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         ChessGame chessGame = new ChessGame(fenStringStartingPosition);
+
         ChessAI randomChessAIW = new ChessAIRandom(chessGame, PieceColor.WHITE);
-        //ChessAI evaluatorChessAI = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
         ChessAI randomChessAIB = new ChessAIRandom(chessGame, PieceColor.BLACK);
 
-        ChessAI evaluatorChessAIW = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 1);
-
-        ChessAI evaluatorChessAIB = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 1);
+        ChessAI chessAiAlphaBetaW = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 2);
+        ChessAI chessAiAlphaBetaB = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Evaluator::evaluatorV1, 2);
 
 //        ChessAI mctsWhite = new ChessAiMCTS(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3);
 //        ChessAI mctsBlack = new ChessAiMCTS(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3);
 
         LocalPlayer localPlayer = new LocalPlayer(chessGame, PieceColor.BLACK);
-        LocalPlayer localPlayer1 = new LocalPlayer(chessGame, PieceColor.WHITE);
+        LocalPlayer localPlayerW = new LocalPlayer(chessGame, PieceColor.WHITE);
 
-        ChessAI chessAIMinMaxW = new ChessAIMinMax(chessGame, PieceColor.WHITE, Evaluator::evaluatorV3, 2);
+        ChessAI chessAIMinMaxW = new ChessAIMinMax(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 2);
+        ChessAI chessAIMinMaxB = new ChessAIMinMax(chessGame, PieceColor.BLACK, Evaluator::evaluatorV1, 2);
 
-        ChessAI chessAIMinMaxB = new ChessAIMinMax(chessGame, PieceColor.BLACK, Evaluator::evaluatorV3, 2);
+        ChessAI ChessAIAlphaBetaMeinsW = new ChessAIAlphaBeta2(chessGame, PieceColor.WHITE, Evaluator::evaluatorV1, 2);
+        ChessAI ChessAIAlphaBetaMeinsB = new ChessAIAlphaBeta2(chessGame, PieceColor.BLACK, Evaluator::evaluatorV1, 2);
 
-        chessGame.setPlayerWhite(chessAIMinMaxW);
-        chessGame.setPlayerBlack(chessAIMinMaxB);
+
+        chessGame.setPlayerWhite(localPlayerW);
+        chessGame.setPlayerBlack(ChessAIAlphaBetaMeinsB);
 
         for(int i=0;i<10;i++) {
             chessGame.start(true);
@@ -41,7 +43,5 @@ public class App {
 
 
 
-
     }
-
 }

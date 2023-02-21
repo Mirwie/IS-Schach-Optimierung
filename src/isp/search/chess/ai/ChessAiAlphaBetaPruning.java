@@ -17,6 +17,8 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
     private final Function<GameState, Double> evalFunction;
     private final int depth;
 
+    int count = 0;
+
     public ChessAiAlphaBetaPruning(ChessGame chessGame, PieceColor pieceColor, Function<GameState, Double> evalFunction, int depth) {
         super(chessGame, pieceColor);
         this.evalFunction = evalFunction;
@@ -30,29 +32,26 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
         GameState currentGameState = chessGame.getGameState();
 
         //new Alpha Beta Pruning with eval method
-        AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(this.evalFunction);
 
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, this.pieceColor);
 
-
+        long startTime = System.currentTimeMillis();
 
         if (this.pieceColor == PieceColor.WHITE) {
             Move bestMove = null;
             double bestMoveEval = Double.NEGATIVE_INFINITY;
 
+            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+
             //for every move: select best
             for (Move legalMove : allLegalMoves) {
                 //clone gameState and move
-                String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
-                GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
                 clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
+                iterateCount();
 
-                //System.out.println(bestMoveEval);
-                //double evalOfMove = alphaBetaPruning.pruning_min(clonedGameState, this.pieceColor, this.depth, bestMoveEval, Double.MAX_VALUE);
+                double evalOfMove = minimax(clonedGameState, this.depth - 1, bestMoveEval, Double.POSITIVE_INFINITY);
 
-                double evalOfMove = alphaBetaPruning.minimax(clonedGameState, PieceColor.WHITE, this.depth, bestMoveEval, Double.POSITIVE_INFINITY);
-
-                //System.out.println(String.format("Move for %s: %s with eval of %s", this.pieceColor, legalMove, evalOfMove));
 
                 if (evalOfMove >= bestMoveEval) {
                     bestMove = legalMove;
@@ -61,13 +60,15 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
                 }
             }
 
+            long executeTime = System.currentTimeMillis() - startTime;
             if (withOutput) {
-                System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, bestMove, bestMoveEval);
+                System.out.printf("Best Move for %s: %s with eval of %s mit %s ausprobiert in %sms %n", this.pieceColor, bestMove, bestMoveEval,count,executeTime);
                 System.out.println("------------------------------------");
             }
 
             //move best move
             currentGameState.movePieceWithLegalCheck(currentGameState.getPieceAtPosition(bestMove.getOldBoardPosition()), bestMove.getNewBoardPosition());
+            resetCount();
         }
 
 
@@ -75,21 +76,18 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
             Move bestMove = null;
             double bestMoveEval = Double.POSITIVE_INFINITY;
 
+            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+
+
             //for every move: select best
             for (Move legalMove : allLegalMoves) {
                 //clone gameState and move
-                String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
-                GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
                 clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
+                iterateCount();
 
-                //System.out.println(bestMoveEval);
-                //double evalOfMove = alphaBetaPruning.pruning_min(clonedGameState, this.pieceColor, this.depth, bestMoveEval, Double.MAX_VALUE);
+                double evalOfMove = minimax(clonedGameState, this.depth - 1, Double.NEGATIVE_INFINITY, bestMoveEval);
 
-                double evalOfMove = alphaBetaPruning.minimax(clonedGameState, PieceColor.BLACK, this.depth, Double.NEGATIVE_INFINITY, bestMoveEval);
-
-                if (withOutput) {
-                    System.out.printf("Move for %s: %s with eval of %s%n", this.pieceColor, legalMove, evalOfMove);
-                }
 
                 if (evalOfMove <= bestMoveEval) {
                     bestMove = legalMove;
@@ -98,13 +96,76 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
                 }
             }
 
+            long executeTime = System.currentTimeMillis() - startTime;
             if (withOutput) {
-                System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, bestMove, bestMoveEval);
+                System.out.printf("Best Move for %s: %s with eval of %s mit %s ausprobiert in %sms %n", this.pieceColor, bestMove, bestMoveEval,count,executeTime);
                 System.out.println("------------------------------------");
             }
 
             //move best move
             currentGameState.movePieceWithLegalCheck(currentGameState.getPieceAtPosition(bestMove.getOldBoardPosition()), bestMove.getNewBoardPosition());
+            resetCount();
         }
+    }
+
+    public double minimax(GameState currentGameState, int depth, double alpha, double beta) {
+        if (depth <= 0 || currentGameState.isGameFinished()) return evalFunction.apply(currentGameState);
+
+
+        if (currentGameState.getTurnColor() == PieceColor.WHITE) {
+            double maxEval = Double.NEGATIVE_INFINITY;
+
+            List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, currentGameState.getTurnColor());
+            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+            for (Move legalMove : allLegalMoves) {
+
+                //clone gameState and move
+               clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
+                iterateCount();
+
+                double eval = minimax(clonedGameState, depth - 1, alpha, beta);
+                maxEval = Math.max(maxEval, eval);
+                alpha = Math.max(alpha, eval);
+
+                if (alpha >= beta) {
+                    break;
+                }
+            }
+
+            return maxEval;
+        } else {
+            double minEval = Double.POSITIVE_INFINITY;
+
+            List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, currentGameState.getTurnColor());
+            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+
+            for (Move legalMove : allLegalMoves) {
+
+                //clone gameState and move
+
+                clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
+                iterateCount();
+
+                double eval = minimax(clonedGameState, depth - 1, alpha, beta);
+                minEval = Math.min(minEval, eval);
+                beta = Math.min(beta, eval);
+
+                if (alpha >= beta) {
+                    break;
+                }
+            }
+
+            return minEval;
+        }
+    }
+
+    public void iterateCount() {
+        this.count++;
+    }
+
+    public void resetCount() {
+        this.count = 0;
     }
 }
