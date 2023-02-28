@@ -9,11 +9,17 @@ import isp.search.chess.util.Move;
 import isp.search.chess.util.MoveCalculator;
 
 import java.util.List;
+import java.util.Queue;
 
-public class Evaluator {
+public class Heuristics {
+
+    public static double CHECK_BONUS = 5;
+    public  static double QUEEN_ALIVE_BONUS = 3;
+    public  static double TWO_BISHOP_BONUS = 5;
+
 
     //positive means white is better
-    public static double evaluatePieceCount(GameState currentGameState) { // Wie viele Pieces nur
+    public static double evaluatePieceCount(GameState currentGameState) { // Wie viele Figuren
 
         double blackPieceCount = currentGameState.getPieces().stream()
                 .filter(p -> p.getPieceColor() == PieceColor.BLACK)
@@ -27,31 +33,37 @@ public class Evaluator {
     }
 
 
-    public static double evaluatePiecesByStaticValue(GameState currentGameState) { // Welche Pieces hat man noch
+    public static double evaluatePiecesByStaticValue(GameState currentGameState) { // Welche Figuren hat man noch
 
         double blackPieceValueSum = currentGameState.getPieces().stream()
                 .filter(p -> p.getPieceColor() == PieceColor.BLACK)
-                .mapToDouble(Evaluator::mapToPieceValueStatic)
+                .mapToDouble(Heuristics::mapToPieceValueStatic)
                 .sum();
 
         double whitePieceValueSum = currentGameState.getPieces().stream()
                 .filter(p -> p.getPieceColor() == PieceColor.WHITE)
-                .mapToDouble(Evaluator::mapToPieceValueStatic)
+                .mapToDouble(Heuristics::mapToPieceValueStatic)
                 .sum();
 
         return whitePieceValueSum - blackPieceValueSum;
     }
 
 
-    public static double movePossibilitiesEvaluator(GameState currentGameState) { // Wie viele Moves
+    public static double movePossibilitiesEvaluator(GameState currentGameState) { // Wie viele Moves für jeden
 
-        //limit opponents movement & maximize own movement
-        double whiteMoveCount = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE).size();
-        double blackMoveCount = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK).size();
+        if (currentGameState.getTurnColor() == PieceColor.WHITE) {
+            return MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE).size();
+        } else {
+            return MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK).size() * -1;
 
-        //normalize
-        return (whiteMoveCount - blackMoveCount) / (whiteMoveCount + blackMoveCount);
+        }
+    }
 
+    public static double movePossibilitiesEvaluatorVS(GameState currentGameState) { // Wie viele Moves mehr als der andere
+        int movesWhite = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE).size();
+        int movesBlack = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK).size();
+
+        return movesWhite - movesBlack;
     }
 
     public static double relativeMovePossibilitiesEvaluator(GameState currentGameState) { // Wie viele Moves relativ
@@ -93,7 +105,6 @@ public class Evaluator {
                     return Double.POSITIVE_INFINITY;
                 }
             } else {
-                System.out.println("never called");
                 if (isInCheck) {
                     //check mate
                     return Double.POSITIVE_INFINITY;
@@ -137,12 +148,10 @@ public class Evaluator {
                 }
             }
 
-
         }
 
-        return 0;
+        return 0; // Keinen Einfluss
     }
-
 
     public static double castleEvaluator(GameState currentGameState) { // sollte man castlen?
 
@@ -203,16 +212,139 @@ public class Evaluator {
         blackSum += (currentGameState.isCastleRightsBlackK() ? 1 : 0);
 
         return (whiteSum - blackSum);
+
     }
 
+    public static double getBonusForCurrentPositon(GameState currentGameState) {
 
-    public static double evaluatorV1(GameState currentGameState) {
+        double totalBonus = 0;
 
-        double staticEvaluation = evaluatePiecesByStaticValue(currentGameState);
-        double checkmateEvaluation = checkmateEvaluator(currentGameState);
+        if (currentGameState.getTurnColor()==PieceColor.WHITE) {
+            List<Move> whiteMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE);
+
+            //get oponent king
+            Piece king = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.BLACK)
+                    .filter(p -> p.getPieceType() == PieceType.KING)
+                    .findFirst()
+                    .get();
+
+            long queenCount = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.WHITE)
+                    .filter(p -> p.getPieceType() == PieceType.QUEEN).count();
+            totalBonus += queenCount * QUEEN_ALIVE_BONUS;
+
+            long bishopCount = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.WHITE)
+                    .filter(p -> p.getPieceType() == PieceType.BISHOP).count();
+
+            if(bishopCount==2) {
+                totalBonus += TWO_BISHOP_BONUS;
+            }
 
 
-        return staticEvaluation + checkmateEvaluation + 0.1 * Math.random();
+            //check for stalemate
+            boolean isInCheck = whiteMoves.stream()
+                    .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
+
+                if (isInCheck) {
+                    totalBonus += CHECK_BONUS;
+                }
+
+        } else {
+            List<Move> blackMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK);
+
+            //get king
+            Piece king = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.WHITE)
+                    .filter(p -> p.getPieceType() == PieceType.KING)
+                    .findFirst()
+                    .get();
+
+            long queenCount = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.BLACK)
+                    .filter(p -> p.getPieceType() == PieceType.QUEEN).count();
+            totalBonus -= queenCount * QUEEN_ALIVE_BONUS;
+
+            long bishopCount = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.BLACK)
+                    .filter(p -> p.getPieceType() == PieceType.BISHOP).count();
+
+            if(bishopCount==2) {
+                totalBonus -= TWO_BISHOP_BONUS;
+            }
+
+
+            //check for stalemate
+            boolean isInCheck = blackMoves.stream()
+                    .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
+
+                if (isInCheck) {
+                     totalBonus -= CHECK_BONUS;
+                }
+
+        }
+        return totalBonus;
+    }
+
+    public static double isQueenAliveBonus(GameState currentGameState) {
+
+        if (currentGameState.getTurnColor()==PieceColor.WHITE) {
+            List<Move> whiteMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE);
+
+            //get oponent king
+            Piece king = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.BLACK)
+                    .filter(p -> p.getPieceType() == PieceType.KING)
+                    .findFirst()
+                    .get();
+
+            //check for stalemate
+            boolean isInCheck = whiteMoves.stream()
+                    .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
+
+            if (isInCheck) {
+                //check mate
+                return CHECK_BONUS;
+            } else {
+                //stalemate
+                return 0;
+            }
+
+        } else {
+            List<Move> blackMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK);
+
+            //get king
+            Piece king = currentGameState.getPieces().stream()
+                    .filter(p -> p.getPieceColor() == PieceColor.WHITE)
+                    .filter(p -> p.getPieceType() == PieceType.KING)
+                    .findFirst()
+                    .get();
+
+            //check for stalemate
+            boolean isInCheck = blackMoves.stream()
+                    .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
+
+            if (isInCheck) {
+                //check mate
+                return -CHECK_BONUS;
+            } else {
+                //stalemate
+                return 0;
+            }
+
+        }
+    }
+
+        public static double evaluatorV1(GameState currentGameState) {
+
+            double evaluatePiecesByStaticValue = evaluatePiecesByStaticValue(currentGameState);
+            double movePossibilitiesEvaluator = movePossibilitiesEvaluator(currentGameState);
+
+            double checkmateEvaluation = checkmateEvaluator(currentGameState);
+
+
+        return evaluatePiecesByStaticValue + checkmateEvaluation + movePossibilitiesEvaluator + getBonusForCurrentPositon(currentGameState); // + 0.1 * Math.random();
 
     }
 
@@ -223,7 +355,7 @@ public class Evaluator {
         double relativeMovePossibilitiesEvaluation = relativeMovePossibilitiesEvaluator(currentGameState);
         double checkmateEvaluation = checkmateEvaluator(currentGameState);
 
-        return 1 * staticEvaluation + 0.3 * relativeMovePossibilitiesEvaluation + checkmateEvaluation + 0.1 * Math.random();
+        return 1 * staticEvaluation + 0.3 * relativeMovePossibilitiesEvaluation + checkmateEvaluation + getBonusForCurrentPositon(currentGameState) + castleEvaluator(currentGameState) * 0.5; // + 0.1 * Math.random();
 
     }
 

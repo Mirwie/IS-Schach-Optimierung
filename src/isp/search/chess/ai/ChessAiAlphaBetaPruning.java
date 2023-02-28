@@ -41,12 +41,13 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
             Move bestMove = null;
             double bestMoveEval = Double.NEGATIVE_INFINITY;
 
-            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
-            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
 
             //for every move: select best
             for (Move legalMove : allLegalMoves) {
                 //clone gameState and move
+                String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+                GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+
                 clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
                 iterateCount();
 
@@ -66,6 +67,7 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
                 System.out.println("------------------------------------");
             }
 
+
             //move best move
             currentGameState.movePieceWithLegalCheck(currentGameState.getPieceAtPosition(bestMove.getOldBoardPosition()), bestMove.getNewBoardPosition());
             resetCount();
@@ -76,12 +78,13 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
             Move bestMove = null;
             double bestMoveEval = Double.POSITIVE_INFINITY;
 
-            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
-            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
-
 
             //for every move: select best
             for (Move legalMove : allLegalMoves) {
+
+                String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+                GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+
                 //clone gameState and move
                 clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
                 iterateCount();
@@ -116,12 +119,13 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
             double maxEval = Double.NEGATIVE_INFINITY;
 
             List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, currentGameState.getTurnColor());
-            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
-            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+
             for (Move legalMove : allLegalMoves) {
 
                 //clone gameState and move
-               clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
+                String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+                GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
+                clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
                 iterateCount();
 
                 double eval = minimax(clonedGameState, depth - 1, alpha, beta);
@@ -138,13 +142,13 @@ public class ChessAiAlphaBetaPruning extends ChessAI {
             double minEval = Double.POSITIVE_INFINITY;
 
             List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(currentGameState, currentGameState.getTurnColor());
-            String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
-            GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
 
             for (Move legalMove : allLegalMoves) {
 
                 //clone gameState and move
 
+                String currentGameFenString = FenLoader.generateFenStringFromGameState(currentGameState);
+                GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
                 clonedGameState.movePieceWithLegalCheck(clonedGameState.getPieceAtPosition(legalMove.getOldBoardPosition()), legalMove.getNewBoardPosition());
                 iterateCount();
 

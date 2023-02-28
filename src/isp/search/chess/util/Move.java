@@ -5,10 +5,15 @@ import java.util.Objects;
 public class Move {
     private BoardPosition oldBoardPosition;
     private BoardPosition newBoardPosition;
+    private int moveNumber;
 
     public Move(BoardPosition oldBoardPosition, BoardPosition newBoardPosition) {
         this.oldBoardPosition = oldBoardPosition;
         this.newBoardPosition = newBoardPosition;
+    }
+
+    public Move() {
+
     }
 
     public BoardPosition getOldBoardPosition() {

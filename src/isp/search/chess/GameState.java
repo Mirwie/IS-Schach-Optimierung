@@ -30,6 +30,26 @@ public class GameState {
         this.totalMoveCount = totalMoveCount;
     }
 
+//    public GameState(MCTSNode mctsNode) {
+//        this.pieces = mctsNode.getGameState().getPieces();
+//        this.turnColor = mctsNode.getGameState().getTurnColor();
+//        this.castleRightsWhiteK = mctsNode.getGameState().isCastleRightsWhiteK();
+//        this.castleRightsWhiteQ =  mctsNode.getGameState().isCastleRightsWhiteQ();
+//        this.castleRightsBlackK = mctsNode.getGameState().isCastleRightsBlackK();
+//        this.castleRightsBlackQ = mctsNode.getGameState().isCastleRightsBlackQ();
+//        this.totalMoveCount = mctsNode.getGameState().getTotalMoveCount();
+//    }
+
+    public GameState(GameState gameState) {
+        this.pieces = gameState.getPieces();
+        this.turnColor = gameState.getTurnColor();
+        this.castleRightsWhiteK = gameState.isCastleRightsWhiteK();
+        this.castleRightsWhiteQ =  gameState.isCastleRightsWhiteQ();
+        this.castleRightsBlackK = gameState.isCastleRightsBlackK();
+        this.castleRightsBlackQ = gameState.isCastleRightsBlackQ();
+        this.totalMoveCount = gameState.getTotalMoveCount();
+    }
+
 
     public List<Piece> getPieces() {
         return this.pieces;
@@ -53,6 +73,9 @@ public class GameState {
 
 
     public boolean movePieceWithLegalCheck(Piece piece, BoardPosition newBoardPosition) {
+        System.out.println(piece);
+        System.out.println(piece.getPieceColor());
+        System.out.println(getTurnColor());
 
         //if no piece at piece position return false
         if (piece == null) return false;
@@ -102,7 +125,7 @@ public class GameState {
                     //stalemate
                     this.gameFinished = true;
                 }
-                System.out.println("game finished");
+                //System.out.println("game finished");
 
             }
 
@@ -116,6 +139,7 @@ public class GameState {
             return true;
 
         } else {
+            System.out.println("Einfach so");
             return false;
         }
 
@@ -192,6 +216,8 @@ public class GameState {
         //change turn
         setTurnColor(getTurnColor() == PieceColor.BLACK ? PieceColor.WHITE : PieceColor.BLACK);
     }
+
+
 
     public boolean isCastleRightsWhiteK() {
         return castleRightsWhiteK;
