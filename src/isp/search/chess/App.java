@@ -16,7 +16,7 @@ public class App {
         ChessAI randomChessAIW = new ChessAIRandom(chessGame, PieceColor.WHITE);
         ChessAI randomChessAIB = new ChessAIRandom(chessGame, PieceColor.BLACK);
 
-        ChessAI chessAiAlphaBetaW = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Heuristics::evaluatorV1, 2);
+        ChessAI chessAiAlphaBetaW = new ChessAiAlphaBetaPruning(chessGame, PieceColor.WHITE, Heuristics::evaluatorV2, 2);
         ChessAI chessAiAlphaBetaB = new ChessAiAlphaBetaPruning(chessGame, PieceColor.BLACK, Heuristics::evaluatorV1, 2);
 
         ChessAI mctsWhite = new ChessAiMCTS<>(chessGame, PieceColor.WHITE);
@@ -32,8 +32,8 @@ public class App {
         ChessAI ChessAIAlphaBetaMeinsB = new ChessAIAlphaBeta2(chessGame, PieceColor.BLACK, Heuristics::evaluatorV1, 2);
 
 
-        chessGame.setPlayerWhite(mctsWhite);
-        chessGame.setPlayerBlack(mctsBlack);
+        chessGame.setPlayerWhite(chessAiAlphaBetaW);
+        chessGame.setPlayerBlack(chessAiAlphaBetaB);
         System.out.println(Double.NEGATIVE_INFINITY);
         for(int i=0;i<10;i++) {
             chessGame.start(true);

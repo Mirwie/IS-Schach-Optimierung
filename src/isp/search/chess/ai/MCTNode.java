@@ -8,20 +8,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ANode<T extends Move> {
-    private final Map<Move, ANode<T>> childs;
+public class MCTNode<T extends Move> {
+    private final Map<Move, MCTNode<T>> childs;
     private final Map<PieceColor, Integer> wins;
     private long simulations = 0;
     private boolean terminal;
     private final Move transition;
-    private ANode<T> parent;
+    private MCTNode<T> parent;
 
     private GameState gameState;
 
     private GameState simulationBoard;
 
     // Creates Child
-    ANode(ANode<T> parent, Move transition, boolean terminal,GameState gameState) {
+    MCTNode(MCTNode<T> parent, Move transition, boolean terminal, GameState gameState) {
         System.out.println("Neuer Node erzeugt");
         this.terminal = terminal;
         this.parent = parent;
@@ -35,7 +35,7 @@ public class ANode<T extends Move> {
     }
 
     // Creates Parent
-    ANode(ANode<T> child) {
+    MCTNode(MCTNode<T> child) {
         this.terminal = false;
         this.parent = null;
         this.transition = null;
@@ -61,11 +61,11 @@ public class ANode<T extends Move> {
         return wins(player);
     }
 
-    public ANode<T> getChild(Move transition) {
+    public MCTNode<T> getChild(Move transition) {
         return childs.get(transition);
     }
 
-    public ANode<T> getParent() {
+    public MCTNode<T> getParent() {
         return parent;
     }
 
@@ -113,11 +113,11 @@ public class ANode<T extends Move> {
         }
     }
 
-    public Collection<ANode<T>> getChilds() {
+    public Collection<MCTNode<T>> getChilds() {
         return childs.values();
     }
 
-    public ANode<T> getNode(T transition) {
+    public MCTNode<T> getNode(T transition) {
         return childs.get(transition);
     }
 

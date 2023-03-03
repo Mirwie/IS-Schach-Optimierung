@@ -16,7 +16,7 @@ import static java.lang.StrictMath.sqrt;
 public class ChessAiMCTS<T extends Move>  extends ChessAI{
 
     // Where we are
-    private ANode<T> current;
+    private MCTNode<T> current;
 
     private static final double C = sqrt(2);
 
@@ -26,7 +26,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         String currentGameFenString = FenLoader.generateFenStringFromGameState(chessGame.getGameState());
         GameState clonedGameState = FenLoader.loadGameStateFromFenString(currentGameFenString);
 
-        current = new ANode<>(null,null,false,clonedGameState);
+        current = new MCTNode<>(null,null,false,clonedGameState);
     }
 
 
@@ -38,7 +38,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
             System.out.println("Keine Moves mehr verfügbar");
         }
 
-        ANode<T> nodeToExpand;
+        MCTNode<T> nodeToExpand;
         boolean stop = false;
         do {
             nodeToExpand = selection();
@@ -46,7 +46,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
                 break;
             }
             // the tree has not been fully explored yet
-            ANode<T> expandedNode = expansion(nodeToExpand);
+            MCTNode<T> expandedNode = expansion(nodeToExpand);
             PieceColor winner = simulation();
             backPropagation(expandedNode, winner);
         } while (!stop);
@@ -56,7 +56,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         double bestValue = Double.NEGATIVE_INFINITY;
         // all possible transitions have been set on root node
         // see expansion(N node)
-        for (ANode<T> child : current.getChilds()) {
+        for (MCTNode<T> child : current.getChilds()) {
             double value = child.ratio(this.pieceColor);
             if (value > bestValue) {
                 bestValue = value;
@@ -69,25 +69,12 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
             System.out.printf("Best Move for %s: %s with eval of %s", this.pieceColor, best, bestValue);
             System.out.println("------------------------------------");
         boolean fertig = chessGame.getGameState().movePieceWithLegalCheck(chessGame.getGameState().getPieceAtPosition(best.getOldBoardPosition()), best.getNewBoardPosition());
-        //System.out.println(fertig);
-
-
-//            MCTS mcts = new MCTS();
-//            mcts.resetSimulationChessboard();
-//
-//            MCTSNode node = mcts.selection(mcts.rootNode);
-//            int diff = mcts.simulation(node);
-//
-//            GameState gameStateNew = new GameState(node);
-//
-//
-//            mcts.backPropagation(node, diff, node.mcDepth, mcts.isInCheck(gameStateNew));
 
     }
 
-    private ANode<T> selection() {
-        ANode<T> n = current;
-        ANode<T> next;
+    private MCTNode<T> selection() {
+        MCTNode<T> n = current;
+        MCTNode<T> next;
         final PieceColor player = current.getGameState().getTurnColor();
         do {
             Move transition = selectTransition(n, player);
@@ -108,7 +95,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
                 if (next == null) {
                     // this transition has never been explored
                     // create child node and expand it
-                    next = new ANode<>(n, transition, current.getGameState().isGameFinished(),current.getGameState());
+                    next = new MCTNode<>(n, transition, current.getGameState().isGameFinished(),current.getGameState());
                 }
             }
             n = next;
@@ -116,12 +103,12 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         return n;
     }
 
-    public Move selectTransition(ANode<T> node, final PieceColor player) {
+    public Move selectTransition(MCTNode<T> node, final PieceColor player) {
         double v = Double.NEGATIVE_INFINITY;
         Move best = null;
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(current.getGameState(), current.getGameState().getTurnColor());
         for (Move transition : allLegalMoves) {
-            ANode<T> n = node.getChild(transition);
+            MCTNode<T> n = node.getChild(transition);
             if (n == null) {
                 // unexplored path
                 return transition;
@@ -131,9 +118,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
                 long simulations = n.simulations();
                 assert simulations > 0;
                 long wins = n.wins(player);
-                // w/n + C * Math.sqrt(ln(n(p)) / n)
-                // TODO : add a random hint to avoid ex-aequo
-                double value = (simulations == 0 ? 0 : wins / simulations + C * sqrt(node.simulations()) / simulations);
+                double value = (simulations == 0 ? 0 : wins / simulations + C * sqrt( node.simulations()) / simulations);
                 if (value > v) {
                     v = value;
                     best = transition;
@@ -143,7 +128,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         return best;
     }
 
-    private ANode<T> expansion(final ANode<T> leaf) {
+    private MCTNode<T> expansion(final MCTNode<T> leaf) {
         if (leaf.isTerminal()) {
             return leaf;
         }
@@ -152,7 +137,7 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
             // expand the path with the chosen transition
 
             current.getGameState().movePieceWithLegalCheck(current.getGameState().getPieceAtPosition(transition.getOldBoardPosition()), transition.getNewBoardPosition());
-            return new ANode<>(leaf, transition, current.getGameState().isGameFinished(),current.getGameState());
+            return new MCTNode<>(leaf, transition, current.getGameState().isGameFinished(),current.getGameState());
         } else {
             return leaf;
         }
@@ -161,7 +146,6 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
     public Move expansionTransition() {
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(current.getGameState(), this.pieceColor);
         System.out.println(allLegalMoves);
-        System.out.println("1");
 
         if (allLegalMoves.isEmpty()) {
             return null;
@@ -175,7 +159,6 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         // do
         while (!current.getGameState().isGameFinished()) {
             Move transition = simulationTransition();
-            assert transition != null; //TODO vllt auch nochmal raus wegen laufzeit
             boolean moveSuccess = current.getGameState().movePieceWithLegalCheck(current.getGameState().getPieceAtPosition(transition.getOldBoardPosition()), transition.getNewBoardPosition());
             System.out.println(moveSuccess);
             transitions.add(transition);
@@ -191,7 +174,6 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
     public Move simulationTransition() {
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(current.getGameState(), current.getGameState().getTurnColor());
         System.out.println(allLegalMoves);
-        System.out.println("1");
 
         if (allLegalMoves.isEmpty()) {
             return null;
@@ -199,11 +181,11 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         return allLegalMoves.get((int) Math.floor(Math.random() * allLegalMoves.size()));
     }
 
-    private void backPropagation(ANode<T> expandedNode, final PieceColor winner) {
-        ANode<T> n = expandedNode;
+    private void backPropagation(MCTNode<T> expandedNode, final PieceColor winner) {
+        MCTNode<T> n = expandedNode;
         while (n != null) {
             n.result(winner);
-            ANode<T> parent = n.getParent();
+            MCTNode<T> parent = n.getParent();
             if (parent == null) {
                 // root reached
                 break;

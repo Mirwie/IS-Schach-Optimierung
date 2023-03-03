@@ -73,9 +73,6 @@ public class GameState {
 
 
     public boolean movePieceWithLegalCheck(Piece piece, BoardPosition newBoardPosition) {
-        System.out.println(piece);
-        System.out.println(piece.getPieceColor());
-        System.out.println(getTurnColor());
 
         //if no piece at piece position return false
         if (piece == null) return false;

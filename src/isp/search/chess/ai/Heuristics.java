@@ -32,7 +32,6 @@ public class Heuristics {
         return whitePieceCount - blackPieceCount;
     }
 
-
     public static double evaluatePiecesByStaticValue(GameState currentGameState) { // Welche Figuren hat man noch
 
         double blackPieceValueSum = currentGameState.getPieces().stream()
@@ -287,54 +286,6 @@ public class Heuristics {
         return totalBonus;
     }
 
-    public static double isQueenAliveBonus(GameState currentGameState) {
-
-        if (currentGameState.getTurnColor()==PieceColor.WHITE) {
-            List<Move> whiteMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.WHITE);
-
-            //get oponent king
-            Piece king = currentGameState.getPieces().stream()
-                    .filter(p -> p.getPieceColor() == PieceColor.BLACK)
-                    .filter(p -> p.getPieceType() == PieceType.KING)
-                    .findFirst()
-                    .get();
-
-            //check for stalemate
-            boolean isInCheck = whiteMoves.stream()
-                    .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
-
-            if (isInCheck) {
-                //check mate
-                return CHECK_BONUS;
-            } else {
-                //stalemate
-                return 0;
-            }
-
-        } else {
-            List<Move> blackMoves = MoveCalculator.getAllLegalMoves(currentGameState, PieceColor.BLACK);
-
-            //get king
-            Piece king = currentGameState.getPieces().stream()
-                    .filter(p -> p.getPieceColor() == PieceColor.WHITE)
-                    .filter(p -> p.getPieceType() == PieceType.KING)
-                    .findFirst()
-                    .get();
-
-            //check for stalemate
-            boolean isInCheck = blackMoves.stream()
-                    .anyMatch(move -> move.getNewBoardPosition().equals(king.getBoardPosition()));
-
-            if (isInCheck) {
-                //check mate
-                return -CHECK_BONUS;
-            } else {
-                //stalemate
-                return 0;
-            }
-
-        }
-    }
 
         public static double evaluatorV1(GameState currentGameState) {
 
@@ -344,7 +295,7 @@ public class Heuristics {
             double checkmateEvaluation = checkmateEvaluator(currentGameState);
 
 
-        return evaluatePiecesByStaticValue + checkmateEvaluation + movePossibilitiesEvaluator + getBonusForCurrentPositon(currentGameState); // + 0.1 * Math.random();
+        return evaluatePiecesByStaticValue + checkmateEvaluation + movePossibilitiesEvaluator + getBonusForCurrentPositon(currentGameState);
 
     }
 
@@ -355,7 +306,7 @@ public class Heuristics {
         double relativeMovePossibilitiesEvaluation = relativeMovePossibilitiesEvaluator(currentGameState);
         double checkmateEvaluation = checkmateEvaluator(currentGameState);
 
-        return 1 * staticEvaluation + 0.3 * relativeMovePossibilitiesEvaluation + checkmateEvaluation + getBonusForCurrentPositon(currentGameState) + castleEvaluator(currentGameState) * 0.5; // + 0.1 * Math.random();
+        return 1 * staticEvaluation + 0.3 * relativeMovePossibilitiesEvaluation + checkmateEvaluation + getBonusForCurrentPositon(currentGameState) + castleEvaluator(currentGameState) * 0.5 + Math.random() * 0.1;
 
     }
 
@@ -365,8 +316,9 @@ public class Heuristics {
         double relativeMovePossibilitiesEvaluation = relativeMovePossibilitiesEvaluator(currentGameState);
         double checkmateEvaluation = checkmateEvaluator(currentGameState);
         double castleEvaluation = castleEvaluator(currentGameState);
+        double getBonusForCurrentPositon = getBonusForCurrentPositon(currentGameState);
 
-        return 1 * staticEvaluation + 0.5 * castleEvaluation + 0.3 * relativeMovePossibilitiesEvaluation + checkmateEvaluation + 0.1 * Math.random();
+        return 1 * staticEvaluation + 0.5 * castleEvaluation + 0.3 * relativeMovePossibilitiesEvaluation + checkmateEvaluation + 0.1 * Math.random() + getBonusForCurrentPositon;
 
     }
 
