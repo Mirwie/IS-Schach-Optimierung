@@ -22,17 +22,17 @@ public class App {
         ChessAI mctsWhite = new ChessAiMCTS<>(chessGame, PieceColor.WHITE);
         ChessAI mctsBlack = new ChessAiMCTS<>(chessGame, PieceColor.BLACK);
 
-        LocalPlayer localPlayer = new LocalPlayer(chessGame, PieceColor.BLACK);
+        LocalPlayer localPlayerB = new LocalPlayer(chessGame, PieceColor.BLACK);
         LocalPlayer localPlayerW = new LocalPlayer(chessGame, PieceColor.WHITE);
 
         ChessAI chessAIMinMaxW = new ChessAIMinMax(chessGame, PieceColor.WHITE, Heuristics::movePossibilitiesEvaluator, 3);
         ChessAI chessAIMinMaxB = new ChessAIMinMax(chessGame, PieceColor.BLACK, Heuristics::evaluatorV1, 3);
 
-        ChessAI ChessAIAlphaBetaMeinsW = new ChessAIAlphaBeta2(chessGame, PieceColor.WHITE, Heuristics::evaluatorV1, 2);
-        ChessAI ChessAIAlphaBetaMeinsB = new ChessAIAlphaBeta2(chessGame, PieceColor.BLACK, Heuristics::evaluatorV1, 2);
+        ChessAI ChessAIAlphaBeta2W = new ChessAIAlphaBeta2(chessGame, PieceColor.WHITE, Heuristics::evaluatorV1, 2);
+        ChessAI ChessAIAlphaBeta2B = new ChessAIAlphaBeta2(chessGame, PieceColor.BLACK, Heuristics::evaluatorV1, 2);
 
 
-        chessGame.setPlayerWhite(chessAiAlphaBetaW);
+        chessGame.setPlayerWhite(mctsWhite);
         chessGame.setPlayerBlack(chessAiAlphaBetaB);
         System.out.println(Double.NEGATIVE_INFINITY);
         for(int i=0;i<10;i++) {

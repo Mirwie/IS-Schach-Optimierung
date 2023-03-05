@@ -3,13 +3,14 @@ package isp.search.chess.ai;
 import isp.search.chess.ChessGame;
 import isp.search.chess.GameState;
 import isp.search.chess.enums.PieceColor;
+import isp.search.chess.util.BoardPosition;
 import isp.search.chess.util.FenLoader;
 import isp.search.chess.util.Move;
 import isp.search.chess.util.MoveCalculator;
 
-
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.StrictMath.sqrt;
 
@@ -32,14 +33,15 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
 
     @Override
     public void move(boolean withOutputs) {
-        System.out.println("Player " + this.pieceColor + " ist dran");
-        List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(current.getGameState(), current.getGameState().getTurnColor());
+        // Im Moment so implementiert, dass immer ein Move gemacht wird, auch wenn eigentlich keiner gefunden wird.
+        // Daher wird zwar immer gespielt aber oftmals ist es eher ein zufälliger Zug
+        long startTime = System.currentTimeMillis();
+        List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(chessGame.getGameState(), this.pieceColor);
         if(allLegalMoves.isEmpty()) {
             System.out.println("Keine Moves mehr verfügbar");
         }
 
         MCTNode<T> nodeToExpand;
-        boolean stop = false;
         do {
             nodeToExpand = selection();
             if (nodeToExpand == null) {
@@ -49,27 +51,40 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
             MCTNode<T> expandedNode = expansion(nodeToExpand);
             PieceColor winner = simulation();
             backPropagation(expandedNode, winner);
-        } while (!stop);
+            System.out.println(System.currentTimeMillis() - startTime);
+        } while (System.currentTimeMillis() - startTime > 4000);
 
 
         Move best = null;
         double bestValue = Double.NEGATIVE_INFINITY;
         // all possible transitions have been set on root node
         // see expansion(N node)
-        for (MCTNode<T> child : current.getChilds()) {
+        for (MCTNode<T> child : current.getChildren()) {
             double value = child.ratio(this.pieceColor);
             if (value > bestValue) {
                 bestValue = value;
                 best = child.getTransition();
-                //assert best != null;
             }
         }
 
-        // make best move
-            System.out.printf("Best Move for %s: %s with eval of %s", this.pieceColor, best, bestValue);
-            System.out.println("------------------------------------");
-        boolean fertig = chessGame.getGameState().movePieceWithLegalCheck(chessGame.getGameState().getPieceAtPosition(best.getOldBoardPosition()), best.getNewBoardPosition());
+        boolean falseMove = true;
+        for(Move move: allLegalMoves) {
+            BoardPosition oldB = move.getOldBoardPosition();
+            BoardPosition newB = move.getNewBoardPosition();
+            if(oldB.equals(best.getOldBoardPosition()) && newB.equals(best.getNewBoardPosition())) {
+                falseMove = false;
+            }
+        }
 
+        if(falseMove) {
+            best = allLegalMoves.get(ThreadLocalRandom.current().nextInt(allLegalMoves.size()));
+        }
+
+        System.out.printf("Best Move for %s: %s with eval of %s%n", this.pieceColor, best, bestValue);
+        System.out.println("------------------------------------");
+
+
+        chessGame.getGameState().movePieceWithLegalCheck(chessGame.getGameState().getPieceAtPosition(best.getOldBoardPosition()), best.getNewBoardPosition());
     }
 
     private MCTNode<T> selection() {
@@ -145,7 +160,6 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
 
     public Move expansionTransition() {
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(current.getGameState(), this.pieceColor);
-        System.out.println(allLegalMoves);
 
         if (allLegalMoves.isEmpty()) {
             return null;
@@ -160,7 +174,6 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
         while (!current.getGameState().isGameFinished()) {
             Move transition = simulationTransition();
             boolean moveSuccess = current.getGameState().movePieceWithLegalCheck(current.getGameState().getPieceAtPosition(transition.getOldBoardPosition()), transition.getNewBoardPosition());
-            System.out.println(moveSuccess);
             transitions.add(transition);
         }
 
@@ -173,7 +186,6 @@ public class ChessAiMCTS<T extends Move>  extends ChessAI{
 
     public Move simulationTransition() {
         List<Move> allLegalMoves = MoveCalculator.getAllLegalMoves(current.getGameState(), current.getGameState().getTurnColor());
-        System.out.println(allLegalMoves);
 
         if (allLegalMoves.isEmpty()) {
             return null;

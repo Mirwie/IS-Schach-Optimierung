@@ -152,7 +152,7 @@ public class Heuristics {
         return 0; // Keinen Einfluss
     }
 
-    public static double castleEvaluator(GameState currentGameState) { // sollte man castlen?
+    public static double castleEvaluator(GameState currentGameState) { // kann man castlen?
 
         //limit opponents movement & maximize own movement
         boolean whiteCastled = false, blackCastled = false;

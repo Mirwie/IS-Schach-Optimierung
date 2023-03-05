@@ -18,8 +18,6 @@ public class MCTNode<T extends Move> {
 
     private GameState gameState;
 
-    private GameState simulationBoard;
-
     // Creates Child
     MCTNode(MCTNode<T> parent, Move transition, boolean terminal, GameState gameState) {
         System.out.println("Neuer Node erzeugt");
@@ -73,10 +71,6 @@ public class MCTNode<T extends Move> {
         return transition;
     }
 
-    public void makeRoot() {
-        this.parent = null;
-    }
-
     public boolean isLeaf() {
         return childs.isEmpty();
     }
@@ -113,13 +107,10 @@ public class MCTNode<T extends Move> {
         }
     }
 
-    public Collection<MCTNode<T>> getChilds() {
+    public Collection<MCTNode<T>> getChildren() {
         return childs.values();
     }
 
-    public MCTNode<T> getNode(T transition) {
-        return childs.get(transition);
-    }
 
     public GameState getGameState() {
         return gameState;
@@ -127,13 +118,5 @@ public class MCTNode<T extends Move> {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
-    }
-
-    public GameState getSimulationBoard() {
-        return simulationBoard;
-    }
-
-    public void setSimulationBoard(GameState simulationBoard) {
-        this.simulationBoard = simulationBoard;
     }
 }
